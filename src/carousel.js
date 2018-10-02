@@ -625,6 +625,16 @@ const Carousel = createReactClass({
     });
   },
 
+  findMaxHeightSlide(slides) {
+    let maxHeight = 0;
+    for (let i = 0; i < slides.length; i++) {
+      if (slides[i].offsetHeight > maxHeight) {
+        maxHeight = slides[i].offsetHeight;
+      }
+    }
+    return maxHeight;
+  },
+
   setInitialDimensions() {
     var self = this, slideWidth, frameHeight, slideHeight;
 
@@ -658,14 +668,16 @@ const Carousel = createReactClass({
 
     slidesToScroll = props.slidesToScroll;
     frame = this.refs.frame;
+    var slideNodes = frame.childNodes[0].childNodes;
+    var maxHeight = this.findMaxHeightSlide(slideNodes);
     firstSlide = frame.childNodes[0].childNodes[0];
     if (firstSlide) {
       firstSlide.style.height = 'auto';
       slideHeight = this.props.vertical ?
         firstSlide.offsetHeight * props.slidesToShow :
-        firstSlide.offsetHeight;
+        maxHeight;
     } else {
-      slideHeight = 100;
+      slideHeight = maxHeight;
     }
 
     if (typeof props.slideWidth !== 'number') {
@@ -895,7 +907,7 @@ const Carousel = createReactClass({
       {
         return {
           position: 'absolute',
-          bottom: '-70',
+          bottom: '-70px',
           left: '50%',
           transform: 'translateX(-50%)',
           WebkitTransform: 'translateX(-50%)',
